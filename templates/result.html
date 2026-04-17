@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition Results - AI Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <header class="result-header">
+            <h1>📊 Nutrition Analysis Results</h1>
+            <a href="/" class="back-btn">← Analyze Another Image</a>
+        </header>
+
+        {% if results %}
+        <div class="results-container">
+            <div class="image-section">
+                <!-- <h3>📸 Your Food Image</h3> -->
+                <div style="font-weight: bold; margin-bottom: 10px; color: #555; font-size: 0.95em;">📸 Your Food Image</div>
+                <div class="image-container">
+                    <img src="{{ url_for('static', filename='uploads/' + image_url) }}" alt="Analyzed food" style="border-radius: 8px;">
+                </div>
+            </div>
+
+            <div class="nutrition-section">
+                <!-- AI Analysis Info -->
+                <div class="ai-info">
+                    <div class="info-card" style="background: #eaf3ff; padding: 12px 18px; border-radius: 6px; margin-bottom: 20px;">
+                        <h4 style="margin: 0 0 5px 0; color: #1565c0; font-size: 0.95em;">🤖 AI Analysis</h4>
+                        <p style="margin: 0; color: #555; font-size: 0.85em;">⏱️ Processing Time: {{ processing_time }} seconds</p>
+                    </div>
+                </div>
+
+                <!-- Nutrition Summary -->
+                <div class="summary-card">
+                    <div style="font-weight: bold; margin-bottom: 10px; color: #555; font-size: 0.95em;">📊 Nutrition Summary</div>
+                    <div class="total-nutrition">
+                        <div class="nutrition-card main-card">
+                            <h4>🔥 Total Calories</h4>
+                            <span class="value calorie-value">{{ total_calories }} kcal</span>
+                        </div>
+                        <div class="nutrition-grid">
+                            <div class="nutrition-card">
+                                <h4>💪 Protein</h4>
+                                <span class="value">{{ total_protein }}g</span>
+                            </div>
+                            <div class="nutrition-card">
+                                <h4>🥑 Fat</h4>
+                                <span class="value">{{ total_fat }}g</span>
+                            </div>
+                            <div class="nutrition-card">
+                                <h4>🍚 Carbs</h4>
+                                <span class="value">{{ total_carbs }}g</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detected Food Items Section -->
+                <div class="food-items-card" style="margin-top: 25px;">
+                    <div style="font-weight: bold; margin-bottom: 10px; color: #555; font-size: 0.95em;">🍽️ Detected Items</div>
+                    <div class="food-list">
+                        {% for item in results %}
+                        <div class="food-item" style="border: 1px solid #ebebeb; border-radius: 6px; padding: 12px 15px; margin-bottom: 10px; background: #fff;">
+                            <div class="food-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span class="food-name" style="font-weight: 600; color: #333; font-size: 0.95em;">{{ item.food_name }}</span>
+                                <span class="food-qty" style="color: #666; font-size: 0.85em;">{{ item.quantity }}</span>
+                            </div>
+                            <div class="food-macros" style="display: flex; gap: 12px; font-size: 0.8em; color: #777;">
+                                <span>Cal: {{ item.calories }}</span>
+                                <span>P: {{ item.protein }}g</span>
+                                <span>F: {{ item.fat }}g</span>
+                                <span>C: {{ item.carbs }}g</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="/" class="btn primary">🔄 Analyze Another</a>
+            <button onclick="window.print()" class="btn secondary">🖨️ Print Results</button>
+        </div>
+
+        {% else %}
+        <div class="error-section">
+            <h3>❌ No Results Found</h3>
+            <p>We couldn't analyze the image. Please try again with a clearer food image.</p>
+            <a href="/" class="btn primary">🔄 Try Again</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <style>
+        /* Additional styles for results page */
+        .info-card h4 {
+            color: #1976d2;
+        }
+
+        .error-section {
+            text-align: center;
+            padding: 40px;
+            background: #ffebee;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .error-section h3 {
+            color: #d32f2f;
+            margin-bottom: 10px;
+        }
+
+        .food-name {
+            text-transform: capitalize;
+        }
+    </style>
+</body>
+
+</html>

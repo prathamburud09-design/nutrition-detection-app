@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Nutrition Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍎 AI Nutrition Detection</h1>
+            <p>Upload a food image to analyze calories and nutrients automatically</p>
+        </header>
+
+        <div class="upload-section">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="foodImage" name="food_image" accept="image/*" hidden>
+                    <div class="upload-content">
+                        <div class="upload-icon">📷</div>
+                        <h3>Upload Food Image</h3>
+                        <p>Click to browse or drag & drop your image</p>
+                        <small>Supported: JPG, PNG, JPEG (Max 16MB)</small>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 25px; text-align: left;">
+                    <label for="foodHint" style="color: #444; font-weight: bold; margin-bottom: 8px; display: block; font-size: 0.95em;">What is this food? (Optional hint for 100% accuracy)</label>
+                    <input type="text" id="foodHint" name="food_hint" placeholder="e.g., Masala Rice, Indian Thali, Poha..." style="width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 10px; font-size: 1em; background: #fafafa; transition: border-color 0.3s; outline: none;">
+                </div>
+                <button type="submit" class="analyze-btn" id="analyzeBtn" disabled>
+                    🔍 Analyze Nutrition
+                </button>
+            </form>
+        </div>
+
+        <div id="previewSection" class="preview-section" style="display: none;">
+            <h3>Image Preview:</h3>
+            <div class="preview-container">
+                <img id="imagePreview" src="" alt="Food preview">
+                <button onclick="clearImage()" class="clear-btn">🗑️ Remove</button>
+            </div>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>AI is analyzing your food...</p>
+            <p class="loading-sub">Detecting food items and calculating nutrition</p>
+        </div>
+
+        <div class="features">
+            <h3>How It Works:</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📸</div>
+                    <h4>1. Upload Image</h4>
+                    <p>Take a photo or upload image of your food</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h4>2. AI Detection</h4>
+                    <p>AI identifies food items using deep learning</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h4>3. Nutrition Analysis</h4>
+                    <p>Get detailed calories and nutrient information</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<input type="hidden" name="MAX_FILE_SIZE" value="16777216">
+</body>
+
+</html>
