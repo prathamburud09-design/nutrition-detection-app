@@ -33,20 +33,19 @@ def analyze_food_image(image_path, food_hint=None):
         hint_instruction = f"IMPORTANT: The user has identified this context/food as: '{food_hint}'. Trust this hint to explicitly identify the primary food, then deduce calories and macros accurately." if food_hint else "Carefully distinguish between visually similar Indian dishes (e.g., Rice, Poha, Upma) based strictly on texture."
         
         prompt = (
-            "Analyze this image and identify EVERY distinct food item or dish shown in the picture (e.g., if it's a platter or Indian Thali, list each individual bowl/item separately like 'Butter Chicken', 'Dal', 'Rice', 'Roti', 'Yogurt'). Do NOT list individual raw spices/herbs (like 'salt', 'cilantro', 'pepper') unless they are standalone items.\n"
-            "CRITICAL INSTRUCTION: You are an expert in Indian cuisine. ALWAYS use authentic Indian culinary names for the dishes instead of generic Western descriptions.\n"
-            "Include diverse regional items: \n"
-            "- North Indian (e.g., 'Paneer Butter Masala', 'Chole Bhature', 'Naan', 'Dal Makhani')\n"
-            "- South Indian (e.g., 'Masala Dosa', 'Idli-Sambar', 'Medu Vada', 'Uttapam', 'Bisi Bele Bath')\n"
-            "- Indian Snacks/Bakery (e.g., 'Egg/Veg/Chicken Puff', 'Samosa', 'Vada Pav', 'Pav Bhaji', 'Dhokla')\n"
-            "- Indian Sweets (e.g., 'Gulab Jamun', 'Jalebi', 'Rasgulla', 'Laddu')\n"
-            "If it's a flaky pastry, it's likely an 'Egg/Veg Puff', not an 'Empanada'.\n"
+            "You are an Elite Indian Culinary Expert AI. Your task is to identify food items in images with 100% accuracy.\n"
+            "Analyze this image carefully. Indian food can be visually ambiguous, so look for subtle clues:\n"
+            "- Texture: Is it a dry sabzi, a wet gravy, a fried snack, or sprouted granules?\n"
+            "- Context: What is it served with? (e.g., Chana/Dal usually pairs with Roti/Rice; Puffs/Samosas are standalone).\n"
+            "- Regional hints: Identify if it is North Indian, South Indian, Street Food, or Bakery.\n"
+            "- Portion Size/Scale: Look at the size of the food relative to the plate, bowl, or hand in the image. Estimate the exact quantity in standard Indian measurements (e.g., '150g', '2 pieces', '1 medium katori/bowl', '200g').\n\n"
+            "First, internally think about the visual features and deduce the exact authentic Indian culinary name. Do not assume generic Western dishes (e.g. NEVER say Empanada, Flatbread, or Bean Salad).\n\n"
             f"{hint_instruction}\n"
-            "For EACH distinct dish or food item detected, estimate its portion size and provide the specific nutritional information (calories, protein, fat, carbs) for that particular item.\n\n"
-            "Return ONLY a valid JSON array with this structure:\n"
+            "After deducing the items, estimate the portion size and provide the specific nutritional information (calories, protein, fat, carbs) for each.\n\n"
+            "You MUST output your final answer as a valid JSON array wrapped in ```json ... ```.\n"
             "[\n"
             "    {\n"
-            '        "name": "food name (must be the Indian name)",\n'
+            '        "name": "Exact Authentic Indian Name (e.g. Masoor Dal, Moong Sprouts, Veg Puff, Roti)",\n'
             '        "quantity": "estimated quantity (e.g. 1 cup, 100g)",\n'
             '        "calories": 100,\n'
             '        "protein": 10,\n'
@@ -54,8 +53,6 @@ def analyze_food_image(image_path, food_hint=None):
             '        "carbs": 20\n'
             "    }\n"
             "]\n"
-            "If no food is detected, return an empty array [].\n"
-            "Do not include markdown formatting like ```json or ```."
         )
         
         chat_completion = client.chat.completions.create(
@@ -79,16 +76,20 @@ def analyze_food_image(image_path, food_hint=None):
         
         # Clean up response text
         text = chat_completion.choices[0].message.content.strip()
-        if text.startswith("```json"):
-            text = text[7:]
-        if text.endswith("```"):
-            text = text[:-3]
-        text = text.strip()
+        print(f"🤖 AI Raw Response: {text}")
         
-        print(f"🤖 AI Response: {text}")
-        
-        results = json.loads(text)
-        return results
+        # Extract JSON array using regex
+        import re
+        match = re.search(r'\[\s*\{.*?\}\s*\]', text, re.DOTALL)
+        if match:
+            json_str = match.group(0)
+            results = json.loads(json_str)
+            return results
+        elif "[]" in text:
+            return []
+        else:
+            print("❌ AI did not return a valid JSON array")
+            return None
         
     except Exception as e:
         print(f"❌ AI Analysis Error: {e}")
