@@ -21,10 +21,16 @@
             <form id="uploadForm" enctype="multipart/form-data">
                 <div class="upload-area" id="uploadArea">
                     <input type="file" id="foodImage" name="food_image" accept="image/*" hidden>
+                    
                     <div class="upload-content">
-                        <div class="upload-icon">📷</div>
-                        <h3>Upload Food Image</h3>
-                        <p>Click to browse or drag & drop your image</p>
+                        <div class="upload-icon">🍲</div>
+                        <h3 style="margin-bottom: 20px;">Drag & Drop Image Here</h3>
+                        
+                        <div class="upload-actions" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px;">
+                            <button type="button" id="browseBtn" style="padding: 10px 20px; background: #f0f0f0; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; font-weight: bold; color: #444; transition: 0.2s;">📁 Browse Files</button>
+                            <button type="button" id="cameraBtn" style="padding: 10px 20px; background: #eef2ff; border: 2px solid #a3b8ff; color: #4b6bfb; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s;">📸 Take Photo</button>
+                        </div>
+                        
                         <small>Supported: JPG, PNG, JPEG (Max 16MB)</small>
                     </div>
                 </div>
@@ -44,6 +50,19 @@
             <div class="preview-container">
                 <img id="imagePreview" src="" alt="Food preview">
                 <button onclick="clearImage()" class="clear-btn">🗑️ Remove</button>
+            </div>
+        </div>
+
+        <!-- Camera Modal for WebRTC Desktop capture -->
+        <div id="cameraModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; flex-direction: column; align-items: center; justify-content: center;">
+            <div style="background: white; padding: 20px; border-radius: 15px; text-align: center; max-width: 90%; width: 500px;">
+                <h3 style="margin-bottom: 15px;">Take a Photo</h3>
+                <video id="cameraVideo" autoplay playsinline style="width: 100%; border-radius: 10px; background: black; margin-bottom: 15px;"></video>
+                <canvas id="cameraCanvas" style="display: none;"></canvas>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button type="button" id="snapBtn" style="padding: 12px 25px; background: #4b6bfb; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: bold;">📸 Snap It!</button>
+                    <button type="button" id="closeCameraBtn" style="padding: 12px 25px; background: #ff4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: bold;">❌ Cancel</button>
+                </div>
             </div>
         </div>
 

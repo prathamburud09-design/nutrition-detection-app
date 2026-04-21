@@ -34,12 +34,13 @@ def analyze_food_image(image_path, food_hint=None):
         
         prompt = (
             "Analyze this image and identify EVERY distinct food item or dish shown in the picture (e.g., if it's a platter or Indian Thali, list each individual bowl/item separately like 'Butter Chicken', 'Dal', 'Rice', 'Roti', 'Yogurt'). Do NOT list individual raw spices/herbs (like 'salt', 'cilantro', 'pepper') unless they are standalone items.\n"
+            "CRITICAL INSTRUCTION: ALWAYS use authentic Indian culinary names for the dishes (e.g., 'Roti', 'Chapati', 'Moong Dal Sprouts Sabzi', 'Chana Masala', 'Poha') instead of generic Western descriptions like 'flatbread', 'bean salad', or 'chickpea curry'.\n"
             f"{hint_instruction}\n"
             "For EACH distinct dish or food item detected, estimate its portion size and provide the specific nutritional information (calories, protein, fat, carbs) for that particular item.\n\n"
             "Return ONLY a valid JSON array with this structure:\n"
             "[\n"
             "    {\n"
-            '        "name": "food name",\n'
+            '        "name": "food name (must be the Indian name)",\n'
             '        "quantity": "estimated quantity (e.g. 1 cup, 100g)",\n'
             '        "calories": 100,\n'
             '        "protein": 10,\n'
@@ -67,6 +68,7 @@ def analyze_food_image(image_path, food_hint=None):
                 }
             ],
             model="meta-llama/llama-4-scout-17b-16e-instruct",
+            temperature=0.0
         )
         
         # Clean up response text

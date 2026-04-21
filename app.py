@@ -107,7 +107,7 @@ def upload_file():
                 total_carbs += item['carbs']
                 data_sources.append('Groq AI (Llama 4)')
         if not results:
-             return jsonify({'error': 'No food items detected, or AI analysis failed.'}), 400
+             return jsonify({'error': 'No food items detected!!'}), 400
         
         processing_time = round(time.time() - start_time, 2)
         
