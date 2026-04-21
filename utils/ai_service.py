@@ -34,7 +34,13 @@ def analyze_food_image(image_path, food_hint=None):
         
         prompt = (
             "Analyze this image and identify EVERY distinct food item or dish shown in the picture (e.g., if it's a platter or Indian Thali, list each individual bowl/item separately like 'Butter Chicken', 'Dal', 'Rice', 'Roti', 'Yogurt'). Do NOT list individual raw spices/herbs (like 'salt', 'cilantro', 'pepper') unless they are standalone items.\n"
-            "CRITICAL INSTRUCTION: ALWAYS use authentic Indian culinary names for the dishes (e.g., 'Roti', 'Chapati', 'Moong Dal Sprouts Sabzi', 'Chana Masala', 'Poha') instead of generic Western descriptions like 'flatbread', 'bean salad', or 'chickpea curry'.\n"
+            "CRITICAL INSTRUCTION: You are an expert in Indian cuisine. ALWAYS use authentic Indian culinary names for the dishes instead of generic Western descriptions.\n"
+            "Include diverse regional items: \n"
+            "- North Indian (e.g., 'Paneer Butter Masala', 'Chole Bhature', 'Naan', 'Dal Makhani')\n"
+            "- South Indian (e.g., 'Masala Dosa', 'Idli-Sambar', 'Medu Vada', 'Uttapam', 'Bisi Bele Bath')\n"
+            "- Indian Snacks/Bakery (e.g., 'Egg/Veg/Chicken Puff', 'Samosa', 'Vada Pav', 'Pav Bhaji', 'Dhokla')\n"
+            "- Indian Sweets (e.g., 'Gulab Jamun', 'Jalebi', 'Rasgulla', 'Laddu')\n"
+            "If it's a flaky pastry, it's likely an 'Egg/Veg Puff', not an 'Empanada'.\n"
             f"{hint_instruction}\n"
             "For EACH distinct dish or food item detected, estimate its portion size and provide the specific nutritional information (calories, protein, fat, carbs) for that particular item.\n\n"
             "Return ONLY a valid JSON array with this structure:\n"
