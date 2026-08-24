@@ -72,7 +72,7 @@ nutrition-detection-app/
 │   ├── index.html        # Upload & scanner interface
 │   └── result.html       # Nutritional report & insights dashboard
 ├── static/
-│   ├── css/style.c   # UI styles & responsive design
+│   ├── css/style.css     # UI styles & responsive design
 │   ├── js/script.js      # Client-side camera & upload interactions
 │   └── uploads/          # Temporary image storage
 ├── requirements.txt      # Project dependencies
