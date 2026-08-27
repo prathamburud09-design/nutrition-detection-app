@@ -24,51 +24,100 @@
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
                 </svg>
-                Scan Another Meal
+                Scan Another
             </a>
         </header>
 
         {% if results %}
         <div class="results-grid">
             <!-- Left Column: Image & Health Stats -->
-            <div class="image-panel">
-                <h3>Analyzed Meal</h3>
-                <img src="{{ url_for('static', filename='uploads/' + image_url) }}" alt="Analyzed food" style="width: 100%; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); max-height: 360px; object-fit: cover;">
+            <div class="image-column">
+                <div class="image-panel">
+                    <h3>Analyzed Meal</h3>
+                    <img src="{{ url_for('static', filename='uploads/' + image_url) }}" alt="Analyzed food" style="width: 100%; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); max-height: 340px; object-fit: cover;">
 
-                <!-- Dietitian Health Review Box -->
-                <div class="coach-card" style="margin-top: 20px; padding: 20px; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                        <span style="font-size: 1.25rem;">🥗</span>
-                        <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">Dietitian Verdict & Health Insights</h4>
-                    </div>
-
-                    <!-- Dietary Tags -->
-                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;">
-                        {% for tag in diet_tags %}
-                        <span style="display: inline-block; padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 12px; background: var(--brand-light); color: var(--brand-blue); border: 1px solid rgba(59, 130, 246, 0.2);">
-                            {{ tag }}
-                        </span>
-                        {% endfor %}
-                    </div>
-
-                    <!-- Dietitian Tip Quote -->
-                    <div style="padding: 12px; background: var(--bg-color); border-left: 3px solid var(--brand-blue); border-radius: var(--radius-sm);">
-                        <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.45; margin: 0; font-style: italic;">
-                            "{{ coach_tip }}"
-                        </p>
+                    <!-- Processing Time -->
+                    <div style="margin-top: 16px; padding: 12px 16px; background: var(--bg-color); border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 28px; height: 28px; background: var(--brand-light); color: var(--brand-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 14px; height: 14px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p style="font-size: 0.7rem; color: var(--text-tertiary); font-weight: 600; text-transform: uppercase; margin: 0;">Analysis Speed</p>
+                            <p style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin: 0;">{{ processing_time }} seconds</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Processing Time -->
-                <div style="margin-top: 16px; padding: 12px 16px; background: var(--bg-color); border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 28px; height: 28px; background: var(--brand-light); color: var(--brand-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 14px; height: 14px;">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                <!-- Unique Fitness & Burn-Off Activity Card -->
+                <div class="burn-card">
+                    <div class="burn-header">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.15rem;">🔥</span>
+                            <h4>Burn-Off & Energy Impact</h4>
+                        </div>
+                        <span class="satiety-pill" style="color: {{ satiety_color }}; border-color: {{ satiety_color }}40; background: {{ satiety_color }}15;">
+                            {{ satiety_badge }}
+                        </span>
                     </div>
-                    <div>
-                        <p style="font-size: 0.7rem; color: var(--text-tertiary); font-weight: 600; text-transform: uppercase; margin: 0;">Analysis Speed</p>
-                        <p style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin: 0;">{{ processing_time }} seconds</p>
+
+                    <!-- Daily Goal Impact Bar -->
+                    <div class="daily-impact-section">
+                        <div class="impact-info">
+                            <span>Daily Intake Contribution</span>
+                            <strong>{{ daily_cal_pct }}% of 2,000 kcal</strong>
+                        </div>
+                        <div class="impact-bar-bg">
+                            <div class="impact-bar-fill" style="width: {{ daily_cal_pct }}%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Workouts Grid -->
+                    <div class="activity-grid">
+                        <!-- Running -->
+                        <div class="activity-item">
+                            <div class="activity-icon-box" style="background: rgba(239, 68, 68, 0.12); color: #EF4444;">
+                                🏃
+                            </div>
+                            <div class="activity-text">
+                                <span class="act-name">Running</span>
+                                <span class="act-time">{{ run_mins }} mins</span>
+                            </div>
+                        </div>
+
+                        <!-- Cycling -->
+                        <div class="activity-item">
+                            <div class="activity-icon-box" style="background: rgba(245, 158, 11, 0.12); color: #F59E0B;">
+                                🚴
+                            </div>
+                            <div class="activity-text">
+                                <span class="act-name">Cycling</span>
+                                <span class="act-time">{{ cycle_mins }} mins</span>
+                            </div>
+                        </div>
+
+                        <!-- Brisk Walking -->
+                        <div class="activity-item">
+                            <div class="activity-icon-box" style="background: rgba(16, 185, 129, 0.12); color: #10B981;">
+                                🚶
+                            </div>
+                            <div class="activity-text">
+                                <span class="act-name">Walking</span>
+                                <span class="act-time">{{ walk_mins }} mins</span>
+                            </div>
+                        </div>
+
+                        <!-- Swimming -->
+                        <div class="activity-item">
+                            <div class="activity-icon-box" style="background: rgba(6, 182, 212, 0.12); color: #06B6D4;">
+                                🏊
+                            </div>
+                            <div class="activity-text">
+                                <span class="act-name">Swimming</span>
+                                <span class="act-time">{{ swim_mins }} mins</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
