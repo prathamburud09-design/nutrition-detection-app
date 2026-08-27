@@ -157,6 +157,31 @@ def upload_file():
         carbs_pct = round((carbs_cals / total_calc_cals) * 100)
         fat_pct = max(0, 100 - (protein_pct + carbs_pct))
 
+        # Step 7b: Fitness & Burn-off Activity Calculations (Standard 70kg baseline)
+        daily_cal_pct = min(100, round((total_calories / 2000.0) * 100))
+        walk_mins = max(1, round(total_calories / 4.8))     # Walking ~4.8 kcal/min
+        run_mins = max(1, round(total_calories / 11.5))      # Running ~11.5 kcal/min
+        cycle_mins = max(1, round(total_calories / 8.2))     # Cycling ~8.2 kcal/min
+        swim_mins = max(1, round(total_calories / 9.5))      # Swimming ~9.5 kcal/min
+
+        # Satiety & Fuel profile
+        if total_fiber >= 6 or total_protein >= 25:
+            satiety_rating = "High Satiety (Long Fullness)"
+            satiety_color = "#10B981"
+            satiety_badge = "High Fiber & Protein"
+        elif protein_pct >= 25:
+            satiety_rating = "Lean Muscle Fuel"
+            satiety_color = "#3B82F6"
+            satiety_badge = "High Protein"
+        elif carbs_pct >= 60:
+            satiety_rating = "High Energy Density"
+            satiety_color = "#F59E0B"
+            satiety_badge = "Carb Rich"
+        else:
+            satiety_rating = "Balanced Nutrition"
+            satiety_color = "#8B5CF6"
+            satiety_badge = "Balanced Macros"
+
         print(f"🎉 Nutrition Analysis Complete in {processing_time}s")
         print(f"📈 Total Calories: {total_calories} kcal | Protein: {total_protein}g | Carbs: {total_carbs}g | Fat: {total_fat}g | Fiber: {total_fiber}g")
         print(f"📊 Calorie Split: {protein_pct}% Protein / {carbs_pct}% Carbs / {fat_pct}% Fat")
@@ -174,6 +199,14 @@ def upload_file():
             protein_pct=protein_pct,
             carbs_pct=carbs_pct,
             fat_pct=fat_pct,
+            daily_cal_pct=daily_cal_pct,
+            walk_mins=walk_mins,
+            run_mins=run_mins,
+            cycle_mins=cycle_mins,
+            swim_mins=swim_mins,
+            satiety_rating=satiety_rating,
+            satiety_color=satiety_color,
+            satiety_badge=satiety_badge,
             diet_tags=diet_tags,
             coach_tip=dietitian_tip,
             image_url=filename,
