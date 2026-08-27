@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const previewSection = document.getElementById('previewSection');
     const imagePreview = document.getElementById('imagePreview');
     const loading = document.getElementById('loading');
-
     const browseBtn = document.getElementById('browseBtn');
     const cameraBtn = document.getElementById('cameraBtn');
 
@@ -33,13 +32,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Click on browse button
-    browseBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        fileInput.removeAttribute('capture');
-        fileInput.click();
-    });
+    if (browseBtn) {
+        browseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileInput.removeAttribute('capture');
+            fileInput.click();
+        });
+    }
 
-    // WebRTC Elements
+    // WebRTC Camera Elements
     const cameraModal = document.getElementById('cameraModal');
     const cameraVideo = document.getElementById('cameraVideo');
     const cameraCanvas = document.getElementById('cameraCanvas');
@@ -47,146 +48,178 @@ document.addEventListener('DOMContentLoaded', function () {
     const closeCameraBtn = document.getElementById('closeCameraBtn');
     let videoStream = null;
 
-    // Click on camera button
-    cameraBtn.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        
-        // If mobile, use native camera app. Else, use WebRTC popup for laptops
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        
-        if (isMobile) {
-            fileInput.setAttribute('capture', 'environment');
-            fileInput.click();
-        } else {
-            try {
-                videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                cameraVideo.srcObject = videoStream;
-                cameraModal.style.display = 'flex';
-            } catch (err) {
-                console.error("Camera access denied or unavailable", err);
-                showToast("Could not access your camera. Make sure your browser has camera permission.");
-            }
-        }
-    });
-
-    closeCameraBtn.addEventListener('click', () => {
-        cameraModal.style.display = 'none';
-        if (videoStream) {
-            videoStream.getTracks().forEach(track => track.stop());
-        }
-    });
-
-    snapBtn.addEventListener('click', () => {
-        const context = cameraCanvas.getContext('2d');
-        cameraCanvas.width = cameraVideo.videoWidth;
-        cameraCanvas.height = cameraVideo.videoHeight;
-        context.drawImage(cameraVideo, 0, 0, cameraCanvas.width, cameraCanvas.height);
-        
-        // Convert canvas image to Blob to simulate file upload
-        cameraCanvas.toBlob((blob) => {
-            const file = new File([blob], "camera_capture.jpg", { type: "image/jpeg" });
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            fileInput.files = dataTransfer.files;
+    if (cameraBtn) {
+        cameraBtn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
-            // Close modal and stop stream
+            if (isMobile) {
+                fileInput.setAttribute('capture', 'environment');
+                fileInput.click();
+            } else {
+                try {
+                    videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                    cameraVideo.srcObject = videoStream;
+                    cameraModal.style.display = 'flex';
+                } catch (err) {
+                    console.error("Camera access denied or unavailable", err);
+                    showToast("Could not access your camera. Make sure your browser has camera permission.");
+                }
+            }
+        });
+    }
+
+    if (closeCameraBtn) {
+        closeCameraBtn.addEventListener('click', () => {
             cameraModal.style.display = 'none';
             if (videoStream) {
                 videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
             }
+        });
+    }
+
+    if (snapBtn) {
+        snapBtn.addEventListener('click', () => {
+            const context = cameraCanvas.getContext('2d');
+            cameraCanvas.width = cameraVideo.videoWidth || 640;
+            cameraCanvas.height = cameraVideo.videoHeight || 480;
+            context.drawImage(cameraVideo, 0, 0, cameraCanvas.width, cameraCanvas.height);
             
-            // Trigger standard change event for preview
-            const event = new Event('change');
-            fileInput.dispatchEvent(event);
-        }, 'image/jpeg', 0.9);
-    });
+            cameraCanvas.toBlob((blob) => {
+                const file = new File([blob], "camera_capture.jpg", { type: "image/jpeg" });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+                
+                cameraModal.style.display = 'none';
+                if (videoStream) {
+                    videoStream.getTracks().forEach(track => track.stop());
+                    videoStream = null;
+                }
+                
+                const event = new Event('change');
+                fileInput.dispatchEvent(event);
+            }, 'image/jpeg', 0.9);
+        });
+    }
 
     // Default upload area click triggers normal file browser
-    uploadArea.addEventListener('click', () => {
-        fileInput.removeAttribute('capture');
-        fileInput.click();
-    });
+    if (uploadArea) {
+        uploadArea.addEventListener('click', () => {
+            fileInput.removeAttribute('capture');
+            fileInput.click();
+        });
+    }
 
     // Handle file selection
-    fileInput.addEventListener('change', function (e) {
-        if (this.files && this.files[0]) {
-            const file = this.files[0];
-
-            // Show preview
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                imagePreview.src = e.target.result;
-                previewSection.style.display = 'block';
-                analyzeBtn.disabled = false;
+    if (fileInput) {
+        fileInput.addEventListener('change', function () {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    previewSection.style.display = 'block';
+                    analyzeBtn.disabled = false;
+                    previewSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                };
+                reader.readAsDataURL(file);
             }
-            reader.readAsDataURL(file);
-        }
-    });
+        });
+    }
 
     // Drag and drop functionality
-    uploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadArea.style.background = '#f0f0f0';
-    });
+    if (uploadArea) {
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
 
-    uploadArea.addEventListener('dragleave', () => {
-        uploadArea.style.background = '';
-    });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
 
-    uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadArea.style.background = '';
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
 
-        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-            fileInput.files = e.dataTransfer.files;
-            const event = new Event('change');
-            fileInput.dispatchEvent(event);
-        }
-    });
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                fileInput.files = e.dataTransfer.files;
+                const event = new Event('change');
+                fileInput.dispatchEvent(event);
+            }
+        });
+    }
+
+    // Dynamic loading messages
+    const loadingSteps = [
+        "Analyzing food visual features...",
+        "Identifying culinary dishes & portion sizes...",
+        "Computing clinical macronutrients & dietitian advice..."
+    ];
+    let stepInterval = null;
 
     // Form submission
-    uploadForm.addEventListener('submit', function (e) {
-        e.preventDefault();
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', function (e) {
+            e.preventDefault();
 
-        if (!fileInput.files[0]) {
-            showToast('Please select or capture a food photo first.');
-            return;
-        }
+            if (!fileInput.files[0]) {
+                showToast('Please select or capture a food photo first.');
+                return;
+            }
 
-        loading.style.display = 'block';
-        analyzeBtn.disabled = true;
+            loading.style.display = 'block';
+            analyzeBtn.disabled = true;
 
-        const formData = new FormData(uploadForm);
+            const loadingText = loading.querySelector('p');
+            let stepIdx = 0;
+            if (loadingText) {
+                loadingText.textContent = loadingSteps[0];
+                stepInterval = setInterval(() => {
+                    stepIdx = (stepIdx + 1) % loadingSteps.length;
+                    loadingText.textContent = loadingSteps[stepIdx];
+                }, 1800);
+            }
 
-        fetch('/upload', {
-            method: 'POST',
-            body: formData
-        })
-            .then(async response => {
-                if (!response.ok) {
-                    let errorMessage = 'Unable to analyze image. Please try again.';
-                    try {
-                        const errData = await response.json();
-                        if (errData.error) {
-                            errorMessage = errData.error;
+            const formData = new FormData(uploadForm);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+                .then(async response => {
+                    if (stepInterval) clearInterval(stepInterval);
+                    
+                    if (!response.ok) {
+                        let errorMessage = 'Unable to analyze image. Please try again.';
+                        try {
+                            const errData = await response.json();
+                            if (errData.error) {
+                                errorMessage = errData.error;
+                            }
+                        } catch (e) {
+                            // Ignore json parse error
                         }
-                    } catch (e) {
-                        // Ignore parse error
+                        throw new Error(errorMessage);
                     }
-                    throw new Error(errorMessage);
-                }
-                return response.text();
-            })
-            .then(html => {
-                document.documentElement.innerHTML = html;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showToast(error.message || 'Unable to process image. Please try again.');
-                loading.style.display = 'none';
-                analyzeBtn.disabled = false;
-            });
-    });
+                    return response.text();
+                })
+                .then(html => {
+                    document.open();
+                    document.write(html);
+                    document.close();
+                })
+                .catch(error => {
+                    if (stepInterval) clearInterval(stepInterval);
+                    console.error('Error:', error);
+                    showToast(error.message || 'Unable to process image. Please try again.');
+                    loading.style.display = 'none';
+                    analyzeBtn.disabled = false;
+                });
+        });
+    }
 });
 
 // Clear image function
@@ -195,7 +228,7 @@ function clearImage() {
     const previewSection = document.getElementById('previewSection');
     const analyzeBtn = document.getElementById('analyzeBtn');
 
-    fileInput.value = '';
-    previewSection.style.display = 'none';
-    analyzeBtn.disabled = true;
+    if (fileInput) fileInput.value = '';
+    if (previewSection) previewSection.style.display = 'none';
+    if (analyzeBtn) analyzeBtn.disabled = true;
 }

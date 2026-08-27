@@ -121,9 +121,11 @@ body {
     margin-bottom: 24px;
 }
 
-.upload-area:hover {
+.upload-area:hover,
+.upload-area.dragover {
     border-color: var(--brand-blue);
     background: var(--brand-light);
+    transform: scale(1.005);
 }
 
 .upload-icon {
@@ -134,7 +136,8 @@ body {
     transition: color 0.2s ease;
 }
 
-.upload-area:hover .upload-icon {
+.upload-area:hover .upload-icon,
+.upload-area.dragover .upload-icon {
     color: var(--brand-blue);
 }
 
@@ -316,6 +319,13 @@ body {
     display: grid;
     grid-template-columns: 350px 1fr;
     gap: 32px;
+    align-items: start;
+}
+
+.image-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .image-panel {
@@ -327,7 +337,7 @@ body {
 }
 
 .image-panel h3 {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: var(--text-secondary);
     margin-bottom: 16px;
     text-transform: uppercase;
@@ -336,11 +346,130 @@ body {
 
 .image-panel img {
     width: 100%;
-    max-height: 400px;
+    max-height: 340px;
     object-fit: cover;
     object-position: center;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
+}
+
+/* Burn-off & Energy Impact Card */
+.burn-card {
+    background: var(--surface-color);
+    border-radius: var(--radius-xl);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+
+.burn-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.burn-header h4 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+}
+
+.satiety-pill {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 12px;
+    border: 1px solid;
+}
+
+.daily-impact-section {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: var(--bg-overlay);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.impact-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.impact-info strong {
+    color: var(--text-primary);
+}
+
+.impact-bar-bg {
+    height: 6px;
+    width: 100%;
+    background: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.impact-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3B82F6, #10B981);
+    border-radius: 4px;
+    transition: width 0.6s ease;
+}
+
+.activity-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--bg-overlay);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.activity-item:hover {
+    border-color: var(--brand-blue);
+    transform: translateY(-1px);
+    background: var(--brand-light);
+}
+
+.activity-icon-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.activity-text .act-name {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+.activity-text .act-time {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 .data-panel {
@@ -523,24 +652,28 @@ body {
     position: absolute;
     top: 12px;
     right: 12px;
-    background: rgba(30, 41, 59, 0.9);
-    border: 1px solid var(--border-color);
-    padding: 8px 12px;
-    border-radius: var(--radius-md);
-    font-size: 0.875rem;
-    font-weight: 500;
+    width: 36px;
+    height: 36px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
     cursor: pointer;
-    box-shadow: var(--shadow-sm);
-    transition: all 0.2s;
-    color: var(--error-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+    color: #EF4444;
     display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
+    padding: 0;
+    z-index: 10;
 }
 
 .clear-btn:hover {
-    background: var(--border-color);
-    transform: scale(1.05);
+    background: rgba(239, 68, 68, 0.25);
+    border-color: #EF4444;
+    transform: scale(1.1);
+    color: #F87171;
 }
 
 .loading {
