@@ -15,7 +15,7 @@ This application handles:
 import sys
 import os
 import time
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 
 # Ensure console supports UTF-8 on Windows
@@ -31,7 +31,7 @@ from utils.ai_service import analyze_food_image
 # App Configuration
 # ---------------------------------------------------------------------------
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'static/uploads/'
+app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Maximum upload size: 16 MB
 
 # Supported image formats
@@ -39,6 +39,14 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'tiff'}
 
 # Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+
+@app.route('/uploads/<path:filename>')
+def serve_uploaded_media(filename):
+    """
+    Guaranteed route to serve uploaded meal images across all hosts (PythonAnywhere/Render/Local).
+    """
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
 def allowed_file(filename):

@@ -5,7 +5,117 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nutritional Analysis Report - NutriLens AI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=4.0">
+    <style>
+        .image-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .burn-card {
+            background: var(--surface-color, #1e293b);
+            border-radius: var(--radius-xl, 1rem);
+            padding: 20px;
+            box-shadow: var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.3));
+            border: 1px solid var(--border-color, #334155);
+        }
+        .burn-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .burn-header h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary, #f8fafc);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 0;
+        }
+        .satiety-pill {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 12px;
+            border: 1px solid;
+        }
+        .daily-impact-section {
+            margin-bottom: 16px;
+            padding: 12px;
+            background: var(--bg-overlay, rgba(255,255,255,0.04));
+            border-radius: var(--radius-md, 0.5rem);
+            border: 1px solid var(--border-color, #334155);
+        }
+        .impact-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-secondary, #94a3b8);
+            margin-bottom: 6px;
+        }
+        .impact-info strong {
+            color: var(--text-primary, #f8fafc);
+        }
+        .impact-bar-bg {
+            height: 6px;
+            width: 100%;
+            background: var(--border-color, #334155);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .impact-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3B82F6, #10B981);
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-overlay, rgba(255,255,255,0.04));
+            border-radius: var(--radius-md, 0.5rem);
+            border: 1px solid var(--border-color, #334155);
+            transition: all 0.2s ease;
+        }
+        .activity-item:hover {
+            border-color: var(--brand-blue, #3b82f6);
+            transform: translateY(-1px);
+            background: var(--brand-light, rgba(59, 130, 246, 0.15));
+        }
+        .activity-icon-box {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .activity-text .act-name {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--text-tertiary, #64748b);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+        .activity-text .act-time {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary, #f8fafc);
+        }
+    </style>
 </head>
 
 <body>
@@ -34,7 +144,7 @@
             <div class="image-column">
                 <div class="image-panel">
                     <h3>Analyzed Meal</h3>
-                    <img src="{{ url_for('static', filename='uploads/' + image_url) }}" alt="Analyzed food" style="width: 100%; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); max-height: 340px; object-fit: cover;">
+                    <img src="/uploads/{{ image_url }}" onerror="this.onerror=null; this.src='{{ url_for('static', filename='uploads/' + image_url) }}';" alt="Analyzed food" style="width: 100%; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); max-height: 340px; object-fit: cover;">
 
                     <!-- Processing Time -->
                     <div style="margin-top: 16px; padding: 12px 16px; background: var(--bg-color); border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
